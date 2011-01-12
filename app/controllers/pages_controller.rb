@@ -1,4 +1,7 @@
 class PagesController < ApplicationController
+  protect_from_forgery
+  include SessionsHelper
+
   def home
     @title = 'Home'
   end
