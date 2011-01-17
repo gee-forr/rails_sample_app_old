@@ -53,6 +53,21 @@ describe UsersController do
                                      )
       end
     end
+
+    #it "should have delete links for admins" do
+    #  @user.toggle!(:admin)
+    #  other_user = User.all.second
+    #  get :index
+    #  response.should have_selector('a', :href    => user_path(other_user),
+    #                                     :content => "delete")
+    #end 
+
+    #it "should not have delete links for non-admins" do
+    #  other_user = User.all.second
+    #  get :index
+    #  response.should_not have_selector('a', :href    => user_path(other_user),                                                                               
+    #                                         :content => "delete")
+    #end
   end
 
   describe "GET 'new'" do
@@ -84,6 +99,18 @@ describe UsersController do
     it "should have a confirmation field" do
       get :new
       response.should have_selector("input[name='user[password_confirmation]'][type='password']")
+    end
+
+    describe "for signed in users" do
+      before(:each) do
+        @user = Factory(:user)
+        test_sign_in(@user)
+      end
+
+      it "should redirect to the the root url for the :new action" do
+        get :new
+        response.should redirect_to(root_path)
+      end
     end
   end
 
@@ -143,6 +170,18 @@ describe UsersController do
       it "should sign a new user in" do
         post :create, :user => @attr
         controller.should be_signed_in
+      end
+    end
+
+    describe "for signed in users" do
+      before(:each) do
+        @user = Factory(:user)
+        test_sign_in(@user)
+      end
+
+      it "should be redirected to the the root url for the :create action" do
+        post :create, :user => @attr
+        response.should redirect_to(root_path)
       end
     end
   end
@@ -279,9 +318,9 @@ describe UsersController do
 
     describe "as an admin user" do
       before(:each) do
-        admin = Factory(:user, :email => "admin@example.com",
+        @admin = Factory(:user, :email => "admin@example.com",
                                :admin => true)
-        test_sign_in(admin)
+        test_sign_in(@admin)
       end
 
       it "should destroy the user" do
@@ -294,6 +333,12 @@ describe UsersController do
         delete :destroy, :id => @user
         response.should redirect_to(users_path)
       end
+
+      #it "s/he should not be able to delete themselves" do
+      #  lambda do
+      #    delete :destroy, :id => @admin
+      #  end.should_not change(User, :count) 
+      #end
     end
   end
 
