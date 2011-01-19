@@ -3,7 +3,8 @@ class PagesController < ApplicationController
   include SessionsHelper
 
   def home
-    @title = 'Home'
+    @title     = 'Home'
+    @micropost = Micropost.new if signed_in?
   end
 
   def contact

@@ -8,7 +8,8 @@ SampleApp::Application.routes.draw do
   match '/signout', :to => 'sessions#destroy'
 
   resources :users
-  resources :sessions, :only => [:new, :create, :destroy]
+  resources :sessions,   :only => [:create, :destroy, :new]
+  resources :microposts, :only => [:create, :destroy]
 
   get "pages/home"
   get "pages/contact"
